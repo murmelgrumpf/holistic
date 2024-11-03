@@ -1,0 +1,9 @@
+.env
+bin
+*_templ.go
+*_templ.txt
+tmp
+vendor
+public/styles.css
+node_modules
+

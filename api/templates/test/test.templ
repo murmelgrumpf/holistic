@@ -1,0 +1,21 @@
+package test
+
+import (
+	"context"
+	"holistic/api/templates/base"
+	"holistic/internals/common/routing"
+	"net/http"
+)
+
+var TestGet = routing.TemplEndpoint(
+	routing.GET, "/test", nil,
+	func(header http.Header, _ context.Context) (templ.Component, error) {
+		return base.HtmxBaseOrPartial("test", Test(), header), nil
+	},
+)
+
+templ Test() {
+	<a href="/map" hx-get="/map" hx-swap="outerHTML" hx-push-url="true">
+		Click here for epic redirecting
+	</a>
+}

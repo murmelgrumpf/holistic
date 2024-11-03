@@ -1,0 +1,49 @@
+package base
+
+import (
+	"holistic/api/templates/common/title"
+	"holistic/api/templates/scripts"
+	"holistic/api/templates/styles"
+	"holistic/api/templates/taskbar"
+	"holistic/internals/common/routing"
+	"holistic/internals/common/templating"
+	"net/http"
+)
+
+templ Base(pageTitle string) {
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			@title.Title(pageTitle)
+			<link rel="icon" type="image/x-icon" href="/public/favicon.ico"/>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<script src="/public/css_scoped_inline.js"></script>
+			<script src="https://unpkg.com/htmx.org@2.0.2"></script>
+			@scripts.Assert()
+			@styles.Variables()
+			@styles.Basics()
+		</head>
+		<body>
+			<div id="element-wrapper"></div>
+			<div id="element-headers">
+				<style> me { display: flex; flex-direction: column; } </style>
+				<nav id="page-navigation">
+					<style> me { flex-shrink: 0; } </style>
+					@taskbar.TaskbarTemplate()
+				</nav>
+				<main id="page-content">
+					<style> me { height: 100%; flex-grow: 1; } </style>
+					{ children... }
+				</main>
+			</div>
+		</body>
+	</html>
+}
+
+func HtmxBaseOrPartial(pageTitle string, component templ.Component, header http.Header) templ.Component {
+	if routing.IsHtmx(header) {
+		return templating.Wrap(title.Title(pageTitle), component)
+	}
+	return templating.Wrap(Base(pageTitle), component)
+}
