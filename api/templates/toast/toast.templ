@@ -1,0 +1,52 @@
+package toast
+
+templ toast() {
+	<script>
+        class Toast extends HTMLElement {
+            connectedCallback() {
+                const root = this.attachShadow({ mode: "open" })
+                root.appendChild(document.getElementById("template-toast").content.cloneNode(true))
+
+                htmx.process(root)
+                
+                setTimeout(() => this.style.opacity = 0, 14900)
+                setTimeout(() => this.remove(), 15000)
+            }
+        }
+        customElements.define("toast-info", class ToastInfo extends Toast{})
+        customElements.define("toast-error", class ToastError extends Toast{})
+        customElements.define("toast-warn", class ToastWarn extends Toast{})
+        customElements.define("toast-success", class ToastSuccess extends Toast{})
+    </script>
+	<template id="template-toast" shadowRoot="open">
+		<style> 
+            :host {
+                display: block;
+                position: relative;
+                border-left: var(--border-size-3) solid;
+                border-radius: var(--radius-2);
+                box-shadow: var(--shadow-2);
+                padding: var(--size-2);
+                width: var(--size-15);
+                min-height: var(--size-8);
+            }
+            :host(toast-info) {
+                border-color: var(--info);
+                background-color: var(--info-lighter);
+            }
+            :host(toast-warn) {
+                border-color: var(--warn);
+                background-color: var(--warn-lighter);
+            }
+            :host(toast-success) {
+                border-color: var(--success);
+                background-color: var(--success-lighter);
+            }
+            :host(toast-error) {
+                border-color: var(--error);
+                background-color: var(--error-lighter);
+            }
+        </style>
+		<slot name="value"></slot>
+	</template>
+}

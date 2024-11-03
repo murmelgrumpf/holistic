@@ -1,0 +1,43 @@
+package simulations
+
+import (
+	"context"
+	"github.com/go-chi/chi/v5"
+	"holistic/api/templates/base"
+	"holistic/api/templates/common/title"
+	"holistic/api/templates/simulations/boolean"
+	"holistic/internals/common/assert"
+	"holistic/internals/common/templating"
+	"holistic/internals/routing"
+	"net/http"
+)
+
+func Simulation(id string) templ.Component {
+	switch id {
+	case "boolean":
+		return simulation(id, boolean.BooleanMap())
+	default:
+		assert.Never("Simulationid does not exist", id)
+		return nil
+	}
+}
+
+var SimulationGet = routing.TemplEndpoint(
+	routing.GET, "/map/simulation/{simulationId}",
+	func(header http.Header, ctx context.Context) (templ.Component, error) {
+
+		simulationId := chi.URLParamFromCtx(ctx, "simulationId")
+
+		if routing.IsHtmx(header) {
+			templating.Wrap(title.Title(pageTitle), component)
+		}
+		templating.Wrap(Base(pageTitle), component)
+		return base.HtmxBaseOrPartial("Map", GlobalMap(header, testGlobalMapEntries, testUserPosition, 1), header), nil
+	},
+)
+
+templ simulation(id string, simulation templ.Component) {
+	<div id={ id }>
+		@simulation
+	</div>
+}

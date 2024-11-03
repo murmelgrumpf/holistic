@@ -1,0 +1,141 @@
+package dragmap
+
+import (
+	"holistic/api/templates/toast"
+	"holistic/internals/elements"
+	"holistic/internals/routing"
+	"net/http"
+	"strconv"
+)
+
+type GlobalMapConnection struct {
+	NodeId   string
+	Required bool
+}
+
+type GlobalMapPosition struct {
+	X int
+	Y int
+}
+
+type GlobalMapEntry struct {
+	Node        GlobalMapNode
+	Connections []GlobalMapConnection
+	Position    GlobalMapPosition
+}
+
+type GlobalMapNode struct {
+	Id       string
+	Name     string
+	BaseNode bool
+}
+
+var testGlobalMapEntries = []GlobalMapEntry{
+	{
+		Node: GlobalMapNode{
+			Id:       "One",
+			Name:     "Firsts Node",
+			BaseNode: true,
+		},
+		Connections: []GlobalMapConnection{
+			{
+				NodeId:   "Two",
+				Required: true,
+			},
+			{
+				NodeId:   "Three",
+				Required: false,
+			},
+		},
+		Position: GlobalMapPosition{
+			X: 0,
+			Y: 0,
+		},
+	},
+	{
+		Node: GlobalMapNode{
+			Id:       "Two",
+			Name:     "Second Node",
+			BaseNode: false,
+		},
+		Connections: []GlobalMapConnection{},
+		Position: GlobalMapPosition{
+			X: 250,
+			Y: 330,
+		},
+	},
+	{
+		Node: GlobalMapNode{
+			Id:       "Three",
+			Name:     "Third Node",
+			BaseNode: false,
+		},
+		Connections: []GlobalMapConnection{},
+		Position: GlobalMapPosition{
+			X: -420,
+			Y: -270,
+		},
+	},
+}
+
+var testUserPosition = GlobalMapPosition{
+	X: 0,
+	Y: 0,
+}
+
+func init() {
+	routing.PartialEndpoint{
+		Request: routing.GET, Path: "/map",
+		Function: func(r *http.Request) (int, templ.Component) {
+			return http.StatusOK, GlobalMap(r.Header, testGlobalMapEntries, testUserPosition, 1, true)
+		},
+	}.Register()
+
+	routing.BaseEndpoint{
+		Request: routing.GET, Path: "/map", Redirects: []string{"/"},
+		Title: "Map",
+		Function: func(r *http.Request) (int, templ.Component) {
+			return http.StatusOK, GlobalMap(r.Header, testGlobalMapEntries, testUserPosition, 1, false)
+		},
+	}.Register()
+}
+
+templ GlobalMap(header http.Header, entries []GlobalMapEntry, position GlobalMapPosition, zoom float64, notify bool) {
+	@elements.Require(header, DragMap)
+	if notify {
+		@toast.InfoOob("Ich bin ein Toast")
+	}
+	<drag-map
+		initial-x={ strconv.Itoa(position.X) }
+		initial-y={ strconv.Itoa(position.Y) }
+		initial-zoom={ strconv.FormatFloat(zoom, 'f', -1, 64) }
+		active="true"
+		id="global-map"
+	>
+		<style> me { height: 100%; width: 100%;} </style>
+		for _, entry := range entries {
+			<drag-node x={ strconv.Itoa(entry.Position.X) } y={ strconv.Itoa(entry.Position.Y) }>
+				<div>
+					<style> me { display: flex; flex-direction: column; align-items: center; height:var(--size-10); } </style>
+					<div class={ templ.KV("base-node", entry.Node.BaseNode) }>
+						<style>
+                            me { display: flex; overflow: clip; border: var(--border-size-1) solid var(--text); }
+                            me.base-node { background-color: var(--primary) }
+                            me.base-node:hover { background-color: var(--primary-light) }
+                            me:not(.base-node) { background-color: var(--secondary) }
+                            me:not(.base-node):hover { background-color: var(--secondary-light) }
+                            me.fullsized { background-color: var(--surface); position: absolute; top:1vh; left: 1vh; height: 98vh; width: 98vh; }
+                            me:not(.fullsized) { position:relative; height: 100%; width: 100%; }
+                            me button { height: 100%; width: 100% }
+                        </style>
+						<button hx-get="/test" hx-target="#global-map" hx-swap="outerHTML" hx-push-url="/test"></button>
+					</div>
+					<div>
+						<style> me { text-wrap: nowrap } </style>
+						{ entry.Node.Name }
+					</div>
+				</div>
+			</drag-node>
+		}
+	</drag-map>
+}

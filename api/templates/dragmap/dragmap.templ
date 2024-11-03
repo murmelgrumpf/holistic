@@ -1,0 +1,298 @@
+package dragmap
+
+import "holistic/internals/elements"
+
+var DragMap = elements.Element{
+	Id:        "drag_map",
+	Component: dragMap(),
+}
+
+templ dragMap() {
+	<script>
+        customElements.define("drag-map", class NavigationMap extends HTMLElement {
+            static observedAttributes = ["x", "y", "zoom", "active"]
+            velocitySlowdown = 0.77
+
+            setActive(active, dontSetAttribute) {
+                this.active = assertBool(active)
+                if(dontSetAttribute !== true)
+                    this.setAttribute("active", this.active)
+
+                if(!this.active)
+                    return
+
+                const otherNavMaps = document.getElementsByTagName('drag-map')
+                for (let i=0, l=otherNavMaps.length; i < l; ++i ) {
+                    if(otherNavMaps[i] === this)
+                        continue
+                    otherNavMaps[i].setActive(false)
+                }
+            }
+
+            setX(x, dontSetAttribute) {
+                this.x = assertNumber(x)
+                this.style.setProperty("--map-x", this.x)
+                if(dontSetAttribute !== true)
+                    this.setAttribute("x", this.x)
+            }
+
+            addX(toAdd) {
+                this.setX(this.x + toAdd)
+            }
+
+            setY(y, dontSetAttribute) {
+                this.y = assertNumber(y)
+                this.style.setProperty("--map-y", this.y)
+                if(dontSetAttribute !== true)
+                    this.setAttribute("y", this.y)
+            }
+
+            addY(toAdd) {
+                this.setY(this.y + toAdd)
+            }
+
+            setZoom(zoom, dontSetAttribute) {
+                this.zoom = assertNumber(zoom)
+                this.style.setProperty("--map-zoom", this.zoom)
+                if(dontSetAttribute !== true)
+                    this.setAttribute("zoom", this.zoom)
+            }
+
+            multZoom(toMult) {
+                this.setZoom(this.zoom * toMult)
+            }
+
+            reset() {
+                this.setX(assertNumber(this.getAttribute("initial-x"), "initial-x"))
+                this.setY(assertNumber(this.getAttribute("initial-y"), "initial-y"))
+                this.setZoom(assertNumber(this.getAttribute("initial-zoom"), "initial-zoom"))
+            }
+
+            top() {
+                return this.getBoundingClientRect().top + window.scrollY
+            }
+
+            left() {
+                return this.getBoundingClientRect().left + window.scrollX
+            }
+
+            doZoom(zoomMult, position) {
+                if (zoomMult > 0)
+                    this.multZoom(1 + Math.abs(zoomMult))
+
+                this.addX(-(zoomMult * (position.clientX - this.left() -  window.innerWidth/2)) / this.zoom)
+                this.addY(-(zoomMult * (position.clientY - this.top() - window.innerHeight/2)) / this.zoom)
+
+                if (zoomMult < 0)
+                    this.multZoom(1 / (1 + Math.abs(zoomMult)))
+            }
+
+            resetVelocity() {
+                this.velocityX = 0
+                this.velocityY = 0
+            }
+
+            setPrevTouch(position) {
+                this.prevTouchX = position.clientX
+                this.prevTouchY = position.clientY
+            }
+
+            setPrevTouchDistance(event) {
+                this.prevTouchDistance = this.twoFingerDistance(event)  
+            }
+
+            twoFingerDistance(event) {
+	            return Math.sqrt(
+                    Math.pow(event.touches.item(0).clientX - event.touches.item(1).clientX, 2) + 
+                    Math.pow(event.touches.item(0).clientY - event.touches.item(1).clientY, 2))
+            }
+
+            twoFingerMiddle(event) {
+                return {
+                    clientX: (event.touches.item(0).clientX - event.touches.item(1).clientX)/2 + event.touches.item(1).clientX, 
+                    clientY: (event.touches.item(0).clientY - event.touches.item(1).clientY)/2 + event.touches.item(1).clientY
+                }
+            }
+
+            tickVelocity() {
+                this.addX(this.velocityX)
+                this.addY(this.velocityY)
+            }
+
+            touchMove(position) {
+                this.velocityX = (position.clientX - this.prevTouchX) / this.zoom
+                this.velocityY = (position.clientY - this.prevTouchY) / this.zoom
+                this.tickVelocity()
+            }
+
+            connectedCallback() {
+                this.reset()
+
+                this.active = this.getAttribute("active") === "true"
+                this.setAttribute("active", this.active)
+
+                // -------- Keyboard -------
+
+                addEventListener("keyup", event => {
+                    if (!this.active || event.code !== "KeyR") { return }
+                    this.reset()
+                })
+
+                // -------- Mouse -------
+
+                this.addEventListener("mousemove", event => {
+                    event.stopPropagation()
+                    if(!this.active || event.buttons !== 1){ return }
+
+                    this.addX(event.movementX / this.zoom)
+                    this.addY(event.movementY / this.zoom)
+                })
+
+                this.addEventListener("mousedown", event => {
+                    event.stopPropagation()
+                    if(this.active)
+                        return
+
+                    this.setActive(true)
+                })
+
+                this.addEventListener("wheel", event => {
+                    event.stopPropagation()
+
+                    const zoomMult = -event.deltaY/window.innerHeight
+                    this.doZoom(zoomMult, event)
+                })
+
+                // --------- Touch ---------
+
+                this.addEventListener("touchstart", (event) => {
+                    event.stopPropagation()
+                    if(!this.active) 
+                        this.setActive(true)
+
+                    switch(event.touches.length) {
+                        case 1:
+                            this.setPrevTouch(event.touches.item(0))
+                            this.resetVelocity()
+                            break
+                        case 2:
+                            this.setPrevTouch(this.twoFingerMiddle(event))
+                            this.setPrevTouchDistance(event)
+                            this.resetVelocity()
+                            break
+                        case 5:
+                            this.reset()
+                            break
+                    }
+                })
+
+                this.addEventListener("touchmove", (event) => {
+                    if(!this.active)
+                        return
+
+                    event.stopPropagation()
+                    switch(event.touches.length) {
+                        case 1:
+                            this.touchMove(event.touches.item(0))
+                            this.setPrevTouch(event.touches.item(0))
+                            break
+                        case 2:
+                            const zoomMult = this.twoFingerDistance(event) / this.prevTouchDistance - 1
+                            const middle = this.twoFingerMiddle(event)
+
+                            this.touchMove(middle)
+                            this.doZoom(zoomMult, middle)
+
+                            this.setPrevTouch(middle)
+                            this.setPrevTouchDistance(event)
+                            break
+                    }
+                })
+
+                this.addEventListener("touchend", (event) => {
+                    event.stopPropagation()
+                    switch(event.touches.length) {
+                        case 0:
+                            let slow = () => {
+                                if(Math.abs(this.velocityX) < 0.01 && Math.abs(this.velocityY) < 0.01) { return }
+
+                                this.tickVelocity()
+
+                                this.velocityX *= this.velocitySlowdown
+                                this.velocityY *= this.velocitySlowdown
+
+                                setTimeout(slow, 5)
+                            }
+                            slow()
+                            break
+                        case 1:
+                            this.setPrevTouch(event.touches.item(0))
+                            break
+                        case 2:
+                            this.setPrevTouch(this.twoFingerMiddle(event))
+                            this.setPrevTouchDistance(event)
+                            break
+                    }
+                })
+            }
+
+            attributeChangedCallback(name, oldValue, newValue) {
+                switch(name){
+                    case "x": 
+                        this.setX(newValue, true)
+                        break
+                    case "y": 
+                        this.setY(newValue, true)
+                        break
+                    case "zoom": 
+                        this.setZoom(newValue, true)
+                        break
+                }
+            }
+        })
+
+        customElements.define("drag-node", class NavigationNode extends HTMLElement {
+            static observedAttributes = ["x", "y"]
+
+            connectedCallback() {
+                this.style.setProperty("--node-x", this.getAttribute("x"))
+                this.style.setProperty("--node-y", this.getAttribute("y"))
+            }
+
+            attributeChangedCallback(name, oldValue, newValue) {
+                switch(name){
+                    case "x": 
+                        this.style.setProperty("--node-x", newValue)
+                        break
+                    case "y": 
+                        this.style.setProperty("--node-y", newValue)
+                        break
+                }
+            }
+        })
+    </script>
+	<style> 
+        drag-map {
+            display: block;
+            touch-action: none;
+            overflow: clip;
+            position: relative;
+        }
+
+        drag-map > drag-node {
+            position: absolute;
+            translate: 50cqw 50cqh;
+            left: round(calc(
+                calc(
+                    calc(var(--map-x) + var(--node-x)) * 
+                    var(--map-zoom))
+                * 1px), 1px);
+            top: round(calc(
+                calc(
+                    calc(var(--map-y) + var(--node-y)) * 
+                    var(--map-zoom))
+                * 1px), 1px);
+            scale: var(--map-zoom);
+        }
+    </style>
+}

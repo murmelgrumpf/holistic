@@ -1,0 +1,35 @@
+package toast
+
+templ Wrapper(displayToast string) {
+	<div id="toast-wrapper">
+		<style> me { 
+            position: absolute; 
+            bottom: var(--size-5); right: var(--size-5); 
+            overflow: clip;
+
+            z-index: var(--layer-important); 
+
+            display:flex;
+            flex-direction: column;
+
+            gap: var(--size-2);
+
+            &>* {
+                animation: slide-in-left .25s var(--ease-2);
+                transition: opacity .1s var(--ease-2);
+            }
+        } </style>
+		@toast()
+		<script>
+            document.addEventListener('htmx:responseError', event => {
+	            document.getElementById('toast-wrapper').insertAdjacentHTML("beforeend", event.detail.xhr.responseText)
+            });
+        </script>
+		switch displayToast {
+			case "NOT_FOUND":
+				@Error("The requested page does not exist.")
+			case "INTERNAL_ERROR":
+				@Error("The requested page could not be loaded.")
+		}
+	</div>
+}

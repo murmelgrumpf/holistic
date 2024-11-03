@@ -1,0 +1,57 @@
+package toast
+
+templ Info(value string) {
+	<toast-info>
+		<div slot="value">{ value }</div>
+	</toast-info>
+}
+
+templ Error(value string) {
+	<toast-error>
+		<div slot="value">{ value }</div>
+	</toast-error>
+}
+
+templ Warn(value string) {
+	<toast-warn>
+		<div slot="value">{ value }</div>
+	</toast-warn>
+}
+
+templ Success(value string) {
+	<toast-success>
+		<div slot="value">{ value }</div>
+	</toast-success>
+}
+
+templ InfoOob(value string) {
+	<div hx-swap-oob="beforeend:#toast-wrapper">
+		<toast-info>
+			<div slot="value">{ value }</div>
+		</toast-info>
+	</div>
+}
+
+templ ErrorOob(value string) {
+	<div hx-swap-oob="beforeend:#toast-wrapper">
+		<toast-error>
+			<div slot="value">{ value }</div>
+		</toast-error>
+	</div>
+}
+
+templ WarnOob(value string) {
+	<div hx-swap-oob="beforeend:#toast-wrapper">
+		<toast-warn>
+			<div slot="value">{ value }</div>
+		</toast-warn>
+	</div>
+}
+
+templ SuccessOob(value string) {
+	<div hx-swap-oob="beforeend:#toast-wrapper">
+		<toast-success>
+			<div slot="value">{ value }</div>
+		</toast-success>
+	</div>
+}

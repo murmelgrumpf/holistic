@@ -1,0 +1,43 @@
+package structure
+
+import (
+	"holistic/api/templates/scripts"
+	"holistic/api/templates/styles"
+	"holistic/api/templates/toast"
+)
+
+templ Base(pageTitle string, displayToast string) {
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<!-- Basic setup -->
+			<meta charset="UTF-8"/>
+			@Title(pageTitle)
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<link rel="icon" type="image/x-icon" href="/public/favicon.ico"/>
+			<!-- Imports -->
+			<script src="/public/css_scoped_inline.js"></script>
+			<script src="https://unpkg.com/htmx.org@2.0.2"></script>
+			<!-- Scripts and Styles -->
+			@scripts.Assert()
+			@scripts.HtmxConfig()
+			@styles.Variables()
+			@styles.Basics()
+		</head>
+		<body>
+			<div id="element-wrapper"></div>
+			<div id="element-headers">
+				<style> me { display: flex; flex-direction: column; } </style>
+				<nav id="page-navigation">
+					<style> me { flex-shrink: 0; } </style>
+					@taskbarTemplate()
+				</nav>
+				<main id="page-content">
+					<style> me { height: 100%; flex-grow: 1; } </style>
+					{ children... }
+				</main>
+			</div>
+			@toast.Wrapper(displayToast)
+		</body>
+	</html>
+}

@@ -1,0 +1,8 @@
+package structure
+
+import "os"
+
+templ Title(title string) {
+	<title>{ os.Getenv("APPLICATION_NAME") } - { title }</title>
+	{ children... }
+}

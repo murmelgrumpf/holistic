@@ -1,0 +1,43 @@
+package elements
+
+import (
+	"net/http"
+	"slices"
+	"strings"
+)
+
+type Element struct {
+	Id        string
+	Component templ.Component
+}
+
+templ Require(headers http.Header, elements ...Element) {
+	{{
+	elementHeader := headers.Get("Custom-Elements")
+	elementList := strings.Split(elementHeader, ",")
+	added := false
+	}}
+	for _, element := range elements {
+		if !slices.Contains(elementList, element.Id) {
+			{{ elementHeader += element.Id + "," }}
+			{{ added = true }}
+			<div class="element-node" id={ "element-" + element.Id }>
+				@element.Component
+			</div>
+		}
+	}
+	if added {
+		<script data-headers={ "{\"Custom-Elements\": \"" + elementHeader + "\"}" }>
+            let nodes = document.getElementsByClassName("element-node")
+            for(let i = 0; i < nodes.length; i++) {
+                document.getElementById("element-wrapper").appendChild(nodes.item(i))
+            }
+
+            let script = document.currentScript
+            document.getElementById("element-headers").setAttribute("hx-headers", script.getAttribute("data-headers"))
+
+            script.remove()
+        </script>
+		{{ headers.Set("Custom-Elements", elementHeader) }}
+	}
+}
