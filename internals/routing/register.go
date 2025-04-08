@@ -2,6 +2,7 @@ package routing
 
 import (
 	"holistic/internals/common/assert"
+	"holistic/internals/common/routes"
 	"net/http"
 
 	"github.com/a-h/templ"
@@ -52,6 +53,7 @@ func addToRouter[T any](endpoints []Endpoint[T], make func(endpoint Endpoint[T])
 			assert.SliceNotContains(registered, redirect, "Endpoint already registered | Redirect for "+endpoint.Path, endpoint.Request)
 			registerFunction(redirect, Redirect(endpoint.Path))
 			registered = append(registered, redirect)
+			routes.RegisteredRedirects[redirect] = endpoint.Path
 		}
 
 		registeredEndpoints[endpoint.Request] = registered

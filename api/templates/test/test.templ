@@ -1,48 +1,37 @@
 package test
 
 import (
-	"holistic/internals/common/option"
 	"holistic/internals/routing"
 	"net/http"
 )
 
 func init() {
-	routing.PartialEndpoint{
-		Request: routing.GET, Path: "/test",
-		Title: option.Some("Test"),
-		Function: func(r *http.Request) (int, templ.Component) {
-			return http.StatusOK, Test()
-		},
-	}.Register()
-
-	routing.BaseEndpoint{
+	routing.PageEndpoint{
 		Request: routing.GET, Path: "/test",
 		Title: "Test",
-		Function: func(r *http.Request) (int, templ.Component) {
+		Function: func(r *http.Request, partial bool) (int, templ.Component) {
 			return http.StatusOK, Test()
 		},
 	}.Register()
 }
 
 templ Test() {
-	<div id="testili">
-		<a href="/map" hx-get="/map" hx-target="#testili" hx-swap="outerHTML" hx-push-url="/map">
-			Click here for epic redirecting
-		</a>
-		<div>
-			<style> me { display: flex; flex-direction: column; gap: var(--size-5); width: 50%; padding: var(--size-3); } </style>
-			<toast-info>
-				<div slot="value">Ich bin ein Toast</div>
-			</toast-info>
-			<toast-error>
-				<div slot="value">ALARM!</div>
-			</toast-error>
-			<toast-success>
-				<div slot="value">Yuhuuuu</div>
-			</toast-success>
-			<toast-warn>
-				<div slot="value"><div>Ich würde aufpassen</div><div>aber wirklich</div></div>
-			</toast-warn>
-		</div>
+	<a href="/map" hx-get="/map" hx-target="#page-content" hx-swap="innerHTML" hx-push-url="/map">
+		Click here for epic redirecting
+	</a>
+	<div>
+		<style> me { display: flex; flex-direction: column; gap: var(--size-5); width: 50%; padding: var(--size-3); } </style>
+		<toast-info>
+			<div slot="value">Ich bin ein Toast</div>
+		</toast-info>
+		<toast-error>
+			<div slot="value">ALARM!</div>
+		</toast-error>
+		<toast-success>
+			<div slot="value">Yuhuuuu</div>
+		</toast-success>
+		<toast-warn>
+			<div slot="value"><div>Ich würde aufpassen</div><div>aber wirklich</div></div>
+		</toast-warn>
 	</div>
 }

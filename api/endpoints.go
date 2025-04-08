@@ -1,7 +1,8 @@
 package api
 
 import (
-	_ "holistic/api/templates/dragmap"
+	_ "holistic/api/templates/attributions"
+	_ "holistic/api/templates/globalmap"
 	_ "holistic/api/templates/test"
 	"holistic/internals/routing"
 

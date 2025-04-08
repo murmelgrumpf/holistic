@@ -1,0 +1,15 @@
+package links
+
+import "holistic/internals/common/routes"
+
+templ PageLink(href string, text string) {
+	{{
+	var redirectPath, hasRedirect = routes.RegisteredRedirects[href]
+	if hasRedirect {
+		href = redirectPath
+	}
+	}}
+	<a href={ templ.URL(href) } hx-get={ href } hx-target="#page-content" hx-swap="innerHTML" hx-push-url={ href }>
+		{ text }
+	</a>
+}

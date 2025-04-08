@@ -23,7 +23,6 @@ func main() {
 	}
 
 	logging.Logo()
-
 	router := chi.NewMux()
 
 	router.Handle("/*", routing.HandleNotFound())

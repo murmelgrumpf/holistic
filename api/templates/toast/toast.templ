@@ -1,23 +1,8 @@
 package toast
 
-templ toast() {
-	<script>
-        class Toast extends HTMLElement {
-            connectedCallback() {
-                const root = this.attachShadow({ mode: "open" })
-                root.appendChild(document.getElementById("template-toast").content.cloneNode(true))
+import "holistic/api/templates/icons"
 
-                htmx.process(root)
-                
-                setTimeout(() => this.style.opacity = 0, 14900)
-                setTimeout(() => this.remove(), 15000)
-            }
-        }
-        customElements.define("toast-info", class ToastInfo extends Toast{})
-        customElements.define("toast-error", class ToastError extends Toast{})
-        customElements.define("toast-warn", class ToastWarn extends Toast{})
-        customElements.define("toast-success", class ToastSuccess extends Toast{})
-    </script>
+templ toast() {
 	<template id="template-toast" shadowRoot="open">
 		<style> 
             :host {
@@ -48,5 +33,23 @@ templ toast() {
             }
         </style>
 		<slot name="value"></slot>
+		@icons.Icon("x", 3)
 	</template>
+	<script>
+        class Toast extends HTMLElement {
+            connectedCallback() {
+                const root = this.attachShadow({ mode: "open" })
+                root.appendChild(document.getElementById("template-toast").content.cloneNode(true))
+
+                htmx.process(root)
+                
+                setTimeout(() => this.style.opacity = 0, 14900)
+                setTimeout(() => this.remove(), 15000)
+            }
+        }
+        customElements.define("toast-info", class ToastInfo extends Toast{})
+        customElements.define("toast-error", class ToastError extends Toast{})
+        customElements.define("toast-warn", class ToastWarn extends Toast{})
+        customElements.define("toast-success", class ToastSuccess extends Toast{})
+    </script>
 }

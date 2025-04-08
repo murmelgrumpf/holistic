@@ -1,0 +1,23 @@
+package icons
+
+import "strconv"
+
+func getIcon(icon string) string {
+	switch icon {
+	case "x":
+		return "regular-xmark-large"
+	case "creative-commons":
+		return "brands-creative-commons"
+	}
+	return icon
+}
+
+templ Icon(icon string, size int) {
+	{{
+	sizeString := strconv.Itoa(size)
+	}}
+	<img
+		src={ "/public/icons/" + getIcon(icon) + ".svg" }
+		{ templ.Attributes{"style":"width: var(--size-"+sizeString+"); height: var(--size-"+sizeString+");"}... }
+	/>
+}

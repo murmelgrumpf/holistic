@@ -1,16 +1,21 @@
 package structure
 
+import "holistic/api/templates/links"
+
 templ taskbarTemplate() {
-	<div>
-		<style> me { position: sticky; top: 0; display: flex; height: var(--size-10); justify-content: space-between; background-color: var(--surface); } </style>
-		<div>
-			logo
-		</div>
+	<nav>
+		<style> me { 
+            position: sticky; top: 0; 
+            flex-shrink: 0;
+            z-index: var(--layer-5); 
+            width:100%; height: var(--size-10); 
+            background-color: var(--surface); 
+            display: flex; justify-content: space-between; 
+        } </style>
+		@links.PageLink("/", "Logo")
 		<div>
 			Mittelteil wuhuu
 		</div>
-		<div>
-			Profil oder so
-		</div>
-	</div>
+		@links.PageLink("/attributions", "Attributions")
+	</nav>
 }

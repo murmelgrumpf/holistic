@@ -1,0 +1,74 @@
+package attributions
+
+import (
+	"holistic/api/templates/icons"
+	"holistic/internals/routing"
+	"net/http"
+)
+
+func init() {
+	routing.PageEndpoint{
+		Request: routing.GET, Path: "/attributions",
+		Title: "Attributions",
+		Function: func(r *http.Request, partial bool) (int, templ.Component) {
+			return http.StatusOK, Attributions(r.Header)
+		},
+	}.Register()
+}
+
+templ Attributions(header http.Header) {
+	<h1>Attributions</h1>
+	<p>This is a quick and dirty page to Attribuite all the things we use. Thank you all for providing such great Tools.</p>
+	<div>
+		<style>
+            me {
+                display: flex;
+                flex-direction: column;
+                gap: var(--size-6);
+
+                >div{
+                    display: flex;   
+                    gap: var(--size-4);
+
+                    >:nth-child(1) {
+                        margin: 0;
+                        flex-shrink: 0; 
+                        width: 20%;
+                    }
+
+                    >:nth-child(2) {
+                        flex-grow: 1;
+                    }
+
+                    >:nth-child(3) {
+                        display: flex;
+                        gap: var(--size-1);
+                        flex-direction: column;
+                        flex-shrink: 0; 
+                        width: 10%;
+                    }
+                }
+            }
+        </style>
+		<div>
+			<h2>Free Icons</h2>
+			<div>This Library provides all the Icons we use. Thank you for providing such great Icons free to use.</div>
+			<div class="links">
+				<a href="https://free-icons.github.io/free-icons" target="_blank">Website</a>
+				<a href="https://creativecommons.org/licenses/by/4.0/legalcode" target="_blank">
+					<style>me {display:flex; gap: var(--size-1); align-items: center;}</style>
+					License 
+					@icons.Icon("brands-creative-commons", 3)
+				</a>
+			</div>
+		</div>
+		<div>
+			<h2>Open Props</h2>
+			<div>This Library provides a good number of variables for standerdized CSS styles. If anyone does not like the Tailwind/Bootstrap way of CSS this is a great alternative.</div>
+			<div class="links">
+				<a href="https://open-props.style" target="_blank">Website</a>
+				<a href="https://mit-license.org" target="_blank">License</a>
+			</div>
+		</div>
+	</div>
+}

@@ -20,7 +20,7 @@ type PartialEndpoint struct {
 	Function  TemplEndpointFunc
 }
 
-type BaseEndpoint struct {
+type PageOnlyEndpoint struct {
 	Request   requestType
 	Path      string
 	Title     string
@@ -28,15 +28,30 @@ type BaseEndpoint struct {
 	Function  TemplEndpointFunc
 }
 
+type PageEndpointFunc func(*http.Request, bool) (int, templ.Component)
+
+type PageEndpoint struct {
+	Request   requestType
+	Path      string
+	Title     string
+	Redirects []string
+	Function  PageEndpointFunc
+}
+
 func (endpoint PartialEndpoint) Register() {
 
 	assert.StringHasPrefix(endpoint.Path, "/", "Path must start with /")
 	assert.NotNil(endpoint.Function, "Endpoint function must not be null", endpoint.Request)
 
+	var partialRedirects = make([]string, len(endpoint.Redirects))
+	for i, url := range endpoint.Redirects {
+		partialRedirects[i] = "/partial" + url
+	}
+
 	templEndpointsToRegister = append(templEndpointsToRegister, Endpoint[templ.Component]{
 		Request:   endpoint.Request,
 		Path:      "/partial" + endpoint.Path,
-		Redirects: endpoint.Redirects,
+		Redirects: partialRedirects,
 		Function: func(r *http.Request) (int, templ.Component) {
 			status, component := endpoint.Function(r)
 			if endpoint.Title.IsNone() {
@@ -47,7 +62,7 @@ func (endpoint PartialEndpoint) Register() {
 	})
 }
 
-func (endpoint BaseEndpoint) Register() {
+func (endpoint PageOnlyEndpoint) Register() {
 
 	assert.StringHasPrefix(endpoint.Path, "/", "Path must start with /")
 	assert.NotNil(endpoint.Function, "Endpoint function must not be null", endpoint.Request)
@@ -62,4 +77,26 @@ func (endpoint BaseEndpoint) Register() {
 			return status, templating.Wrap(structure.Base(endpoint.Title, r.URL.Query().Get("toast")), component)
 		},
 	})
+}
+
+func (endpoint PageEndpoint) Register() {
+	PageOnlyEndpoint{
+		Request:   endpoint.Request,
+		Path:      endpoint.Path,
+		Title:     endpoint.Title,
+		Redirects: endpoint.Redirects,
+		Function: func(r *http.Request) (int, templ.Component) {
+			return endpoint.Function(r, false)
+		},
+	}.Register()
+
+	PartialEndpoint{
+		Request:   endpoint.Request,
+		Path:      endpoint.Path,
+		Title:     option.Some(endpoint.Title),
+		Redirects: endpoint.Redirects,
+		Function: func(r *http.Request) (int, templ.Component) {
+			return endpoint.Function(r, true)
+		},
+	}.Register()
 }

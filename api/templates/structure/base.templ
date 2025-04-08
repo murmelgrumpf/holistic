@@ -16,7 +16,7 @@ templ Base(pageTitle string, displayToast string) {
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 			<link rel="icon" type="image/x-icon" href="/public/favicon.ico"/>
 			<!-- Imports -->
-			<script src="/public/css_scoped_inline.js"></script>
+			<script src="/public/scripts/css_scoped_inline.js"></script>
 			<script src="https://unpkg.com/htmx.org@2.0.2"></script>
 			<!-- Scripts and Styles -->
 			@scripts.Assert()
@@ -27,13 +27,9 @@ templ Base(pageTitle string, displayToast string) {
 		<body>
 			<div id="element-wrapper"></div>
 			<div id="element-headers">
-				<style> me { display: flex; flex-direction: column; } </style>
-				<nav id="page-navigation">
-					<style> me { flex-shrink: 0; } </style>
-					@taskbarTemplate()
-				</nav>
+				<style> me { height: 100%; display: flex; flex-direction: column; } </style>
+				@taskbarTemplate()
 				<main id="page-content">
-					<style> me { height: 100%; flex-grow: 1; } </style>
 					{ children... }
 				</main>
 			</div>
