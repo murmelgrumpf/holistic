@@ -1,10 +1,6 @@
 package structure
 
-import (
-	"holistic/api/templates/scripts"
-	"holistic/api/templates/styles"
-	"holistic/api/templates/toast"
-)
+import "holistic/api/templates/toast"
 
 templ Base(pageTitle string, displayToast string) {
 	<!DOCTYPE html>
@@ -16,13 +12,15 @@ templ Base(pageTitle string, displayToast string) {
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 			<link rel="icon" type="image/x-icon" href="/public/favicon.ico"/>
 			<!-- Imports -->
-			<script src="/public/scripts/css_scoped_inline.js"></script>
+			<script src="https://cdn.jsdelivr.net/gh/gnat/css-scope-inline@main/script.js"></script>
 			<script src="https://unpkg.com/htmx.org@2.0.2"></script>
+			<link rel="stylesheet" href="https://unpkg.com/open-props"/>
+			<link rel="stylesheet" href="https://unpkg.com/normalize.css@8.0.1/normalize.css"/>
 			<!-- Scripts and Styles -->
-			@scripts.Assert()
-			@scripts.HtmxConfig()
-			@styles.Variables()
-			@styles.Basics()
+			<link rel="stylesheet" href="/public/styles/variables.css"/>
+			<link rel="stylesheet" href="/public/styles/basics.css"/>
+			<script src="/public/scripts/htmx-config.js"></script>
+			<script src="/public/scripts/assert.js"></script>
 		</head>
 		<body>
 			<div id="element-wrapper"></div>

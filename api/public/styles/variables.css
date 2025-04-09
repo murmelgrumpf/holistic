@@ -1,0 +1,35 @@
+:root {
+    --primary: var(--green-9);
+    --primary-light: var(--green-7);
+    --primary-lighter: var(--green-5);
+
+    --secondary: var(--choco-7);
+    --secondary-light: var(--choco-5);
+    --secondary-lighter: var(--choco-3);
+
+    --bg: var(--gray-1);
+    --surface: var(--gray-0);
+
+    --error: var(--red-9);
+    --error-light: var(--red-5);
+    --error-lighter: var(--red-1);
+
+    --info: var(--blue-9);
+    --info-light: var(--blue-5);
+    --info-lighter: var(--blue-1);
+
+    --success: var(--green-9);
+    --success-light: var(--green-5);
+    --success-lighter: var(--green-1);
+
+    --warn: var(--yellow-9);
+    --warn-light: var(--yellow-5);
+    --warn-lighter: var(--yellow-1);
+
+    --placeholder: var(--gray-7);
+    --placeholder-light: var(--gray-5);
+    --placeholder-lighter: var(--gray-3);
+
+    --text: black;
+    --text-contrast: white;
+}

@@ -1,75 +1,9 @@
 package buttons
 
-import "holistic/internals/elements"
+import "holistic/api/templates/icons"
 
-var DragMap = elements.Element{
-	Id:        "button_icon",
-	Component: buttonIcon(),
-}
-
-//TODO: bing fixing
-templ buttonIcon() {
-	<script>
-        customElements.define("button-icon", class NavigationMap extends HTMLElement {
-            connectedCallback() {
-            }
-
-            attributeChangedCallback(name, oldValue, newValue) {
-                switch(name){
-                    case "icon": 
-                        this.setX(newValue, true)
-                        break
-                    case "y": 
-                        this.setY(newValue, true)
-                        break
-                    case "zoom": 
-                        this.setZoom(newValue, true)
-                        break
-                }
-            }
-        })
-
-        customElements.define("drag-node", class NavigationNode extends HTMLElement {
-            static observedAttributes = ["x", "y"]
-
-            connectedCallback() {
-                this.style.setProperty("--node-x", this.getAttribute("x"))
-                this.style.setProperty("--node-y", this.getAttribute("y"))
-            }
-
-            attributeChangedCallback(name, oldValue, newValue) {
-                switch(name){
-                    case "x": 
-                        this.style.setProperty("--node-x", newValue)
-                        break
-                    case "y": 
-                        this.style.setProperty("--node-y", newValue)
-                        break
-                }
-            }
-        })
-    </script>
-	<style> 
-        drag-map {
-            display: block;
-            touch-action: none;
-            position: relative;
-        }
-
-        drag-map > drag-node {
-            position: absolute;
-            translate: 50cqw 50cqh;
-            left: round(calc(
-                calc(
-                    calc(var(--map-x) + var(--node-x)) * 
-                    var(--map-zoom))
-                * 1px), 1px);
-            top: round(calc(
-                calc(
-                    calc(var(--map-y) + var(--node-y)) * 
-                    var(--map-zoom))
-                * 1px), 1px);
-            scale: var(--map-zoom);
-        }
-    </style>
+templ ButtonIcon(icon string, size int) {
+	<button>
+		@icons.Icon(icon, size)
+	</button>
 }
