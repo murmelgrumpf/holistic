@@ -1,7 +1,6 @@
 package attributions
 
 import (
-	"holistic/api/templates/icons"
 	"holistic/internals/routing"
 	"net/http"
 )
@@ -20,54 +19,72 @@ templ Attributions(header http.Header) {
 	<h1>Attributions</h1>
 	<p>This is a quick and dirty page to Attribuite all the things we use. Thank you all for providing such great Tools.</p>
 	<div>
-		<style>
-            me {
-                display: flex;
-                flex-direction: column;
-                gap: var(--size-6);
+		<style> me {
+            display: flex;
+            flex-direction: column;
+            gap: var(--size-6);
 
-                >div{
-                    display: flex;   
-                    gap: var(--size-4);
+            >div{
+                display: flex;   
+                gap: var(--size-4);
 
-                    >:nth-child(1) {
-                        margin: 0;
-                        flex-shrink: 0; 
-                        width: 20%;
-                    }
+                >:nth-child(1) {
+                    margin: 0;
+                    flex-shrink: 0; 
+                    width: 20%;
+                }
 
-                    >:nth-child(2) {
-                        flex-grow: 1;
-                    }
+                >:nth-child(2) {
+                    flex-grow: 1;
+                }
 
-                    >:nth-child(3) {
-                        display: flex;
-                        gap: var(--size-1);
-                        flex-direction: column;
-                        flex-shrink: 0; 
-                        width: 10%;
-                    }
+                >:nth-child(3) {
+                    display: flex;
+                    gap: var(--size-1);
+                    flex-direction: column;
+                    flex-shrink: 0; 
+                    width: 10%;
                 }
             }
-        </style>
+        } </style>
+		<div>
+			<h2>HTMX</h2>
+			<div>One of the backbones of this project. Enables us to have one "end", rather than front and backend. Honestly a joy to work with and a definite recommendation to any WebDev.</div>
+			<div class="links">
+				<a href="https://htmx.org" target="_blank">Website</a>
+				<a href="https://github.com/bigskysoftware/htmx/blob/6836e87a6cc3919b7f4679aec6712ee4bc340196/LICENSE" target="_blank">License (BSD)</a>
+			</div>
+		</div>
 		<div>
 			<h2>Free Icons</h2>
-			<div>This Library provides all the Icons we use. Thank you for providing such great Icons free to use.</div>
+			<div>This library provides all the Icons we use. Thank you for providing such great Icons free to use.</div>
 			<div class="links">
 				<a href="https://free-icons.github.io/free-icons" target="_blank">Website</a>
-				<a href="https://creativecommons.org/licenses/by/4.0/legalcode" target="_blank">
-					<style>me {display:flex; gap: var(--size-1); align-items: center;}</style>
-					License 
-					@icons.Icon("brands-creative-commons", 3)
-				</a>
+				<a href="https://github.com/free-icons/free-icons/blob/5a6047cf7efd6a99ad6db6ad4d33ec9d34af429e/LICENSE" target="_blank">License (CC)</a>
 			</div>
 		</div>
 		<div>
 			<h2>Open Props</h2>
-			<div>This Library provides a good number of variables for standerdized CSS styles. If anyone does not like the Tailwind/Bootstrap way of CSS this is a great alternative.</div>
+			<div>This library provides a good number of variables for standerdized CSS styles. If anyone does not like the Tailwind/Bootstrap way of CSS this is a great alternative.</div>
 			<div class="links">
 				<a href="https://open-props.style" target="_blank">Website</a>
-				<a href="https://mit-license.org" target="_blank">License</a>
+				<a href="https://github.com/argyleink/open-props/blob/6dfb2c91712e0b09580e2ef150759788b80eafa6/LICENSE" target="_blank">License (MIT)</a>
+			</div>
+		</div>
+		<div>
+			<h2>normalize.css</h2>
+			<div>This library normalized many HTML-elements to look the same on every browser and more consistent. A nice small stylesheet to include in any project.</div>
+			<div class="links">
+				<a href="https://github.com/necolas/normalize.css" target="_blank">GitHub</a>
+				<a href="https://github.com/necolas/normalize.css/blob/fc091cce1534909334c1911709a39c22d406977b/LICENSE.md" target="_blank">License (MIT)</a>
+			</div>
+		</div>
+		<div>
+			<h2>Css Scope Inline</h2>
+			<div>This script enables using the style tags more inline by creating <code>me_*</code> classes that are scoped to the parent element. If anyone likes the LOB of Tailwind, but not the class names, this is a wonderful way to achieve this.</div>
+			<div class="links">
+				<a href="https://github.com/gnat/css-scope-inline" target="_blank">GitHub</a>
+				<a href="https://github.com/gnat/css-scope-inline/blob/94c64bef727a6f81317f0473d379a133e9d35ef4/LICENSE" target="_blank">License (MIT)</a>
 			</div>
 		</div>
 	</div>

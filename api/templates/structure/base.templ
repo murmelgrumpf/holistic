@@ -14,13 +14,14 @@ templ Base(pageTitle string, displayToast string) {
 			<!-- Imports -->
 			<script src="https://cdn.jsdelivr.net/gh/gnat/css-scope-inline@main/script.js"></script>
 			<script src="https://unpkg.com/htmx.org@2.0.2"></script>
-			<link rel="stylesheet" href="https://unpkg.com/open-props"/>
-			<link rel="stylesheet" href="https://unpkg.com/normalize.css@8.0.1/normalize.css"/>
+			<link rel="stylesheet" href="https://unpkg.com/open-props" crossorigin="anonymous"/>
+			<link rel="stylesheet" href="https://unpkg.com/normalize.css@8.0.1/normalize.css" crossorigin="anonymous"/>
 			<!-- Scripts and Styles -->
 			<link rel="stylesheet" href="/public/styles/variables.css"/>
 			<link rel="stylesheet" href="/public/styles/basics.css"/>
 			<script src="/public/scripts/htmx-config.js"></script>
 			<script src="/public/scripts/assert.js"></script>
+			<script src="/public/scripts/shadow-root.js"></script>
 		</head>
 		<body>
 			<div id="element-wrapper"></div>

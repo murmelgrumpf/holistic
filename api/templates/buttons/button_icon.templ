@@ -1,9 +1,24 @@
 package buttons
 
-import "holistic/api/templates/icons"
+import (
+	"holistic/api/templates/icons"
+	"strconv"
+)
 
-templ ButtonIcon(icon string, size int) {
-	<button>
+templ ButtonIcon(icon string, size int, attrs templ.Attributes) {
+	<button {attrs...} { templ.Attributes{"style":"--padding: calc(var(--size-"+strconv.Itoa(size)+")/3)"}... }>
+		<style> me { 
+            width: min-content; height: min-content; 
+            line-height: 0;
+            padding: var(--padding)
+            border-radius: calc(var(--radius-3)/1.5);
+
+            transition: background-color .1s var(--ease-5);
+
+            &:hover {
+                background-color: rgb(from black r g b / 5%);
+            }
+        } </style>
 		@icons.Icon(icon, size)
 	</button>
 }

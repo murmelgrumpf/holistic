@@ -1,6 +1,6 @@
 package toast
 
-import "holistic/api/templates/icons"
+import "holistic/api/templates/buttons"
 
 templ toast() {
 	<template id="template-toast" shadowRoot="open">
@@ -33,12 +33,14 @@ templ toast() {
             }
         </style>
 		<slot name="value"></slot>
-		@icons.Icon("x", 3)
+		@buttons.ButtonIcon("x", 3, templ.Attributes{"onclick": "this.getRootNode().host.remove()"})
 	</template>
 	<script>
         class Toast extends HTMLElement {
             connectedCallback() {
                 const root = this.attachShadow({ mode: "open" })
+                styleShadowRoot(root)
+
                 root.appendChild(document.getElementById("template-toast").content.cloneNode(true))
 
                 htmx.process(root)
